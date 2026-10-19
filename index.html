@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz de Inteligência Artificial</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f0f2f5;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .quiz-container {
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 600px;
+            padding: 30px;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+            color: #1a73e8;
+            text-align: center;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 25px;
+            font-size: 0.95rem;
+        }
+
+        .question-number {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #1a73e8;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        .question-text {
+            font-size: 1.15rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            line-height: 1.4;
+        }
+
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+
+        .option-btn {
+            background-color: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            padding: 14px 18px;
+            font-size: 0.95rem;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: #495057;
+        }
+
+        .option-btn:hover {
+            background-color: #e8f0fe;
+            border-color: #4285f4;
+            color: #1967d2;
+        }
+
+        .option-btn.selected {
+            background-color: #e8f0fe;
+            border-color: #1a73e8;
+            color: #1a73e8;
+            font-weight: 600;
+        }
+
+        .btn {
+            background-color: #1a73e8;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 24px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: background-color 0.2s ease;
+        }
+
+        .btn:hover {
+            background-color: #1557b0;
+        }
+
+        .btn:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        .result-container {
+            text-align: center;
+            display: none;
+        }
+
+        .score-circle {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: #e8f0fe;
+            color: #1a73e8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.2rem;
+            font-weight: bold;
+            margin: 20px auto;
+            border: 4px solid #1a73e8;
+        }
+
+        .result-message {
+            font-size: 1.1rem;
+            margin-bottom: 25px;
+            color: #555;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="quiz-container">
+        <!-- Tela de Perguntas -->
+        <div id="quiz-screen">
+            <h1>Quiz de Inteligência Artificial</h1>
+            <p class="subtitle">Teste seus conhecimentos gerais sobre IA</p>
+            
+            <div class="question-number" id="question-number">Pergunta 1 de 10</div>
+            <div class="question-text" id="question-text">Carregando pergunta...</div>
+            
+            <div class="options-container" id="options-container">
+                <!-- Opções serão inseridas via JavaScript -->
+            </div>
+
+            <button class="btn" id="next-btn" disabled>Próxima Pergunta</button>
+        </div>
+
+        <!-- Tela de Resultados -->
+        <div id="result-screen" class="result-container">
+            <h1>Resultado Final</h1>
+            <div class="score-circle" id="score-display">0/10</div>
+            <p class="result-message" id="result-message"></p>
+            <button class="btn" onclick="restartQuiz()">Tentar Novamente</button>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                question: "O que significa a sigla IA?",
+                options: [
+                    "Informática Avançada",
+                    "Inteligência Artificial",
+                    "Interface Autônoma",
+                    "Integração Automatizada"
+                ],
+                answer: 1
+            },
+            {
+                question: "Quem é amplamente considerado o 'Pai da Ciência da Computação e da IA', famoso por criar um teste de inteligência para máquinas?",
+                options: [
+                    "Alan Turing",
+                    "Bill Gates",
+                    "Ada Lovelace",
+                    "Steve Jobs"
+                ],
+                answer: 0
+            },
+            {
+                question: "O que é 'Machine Learning' (Aprendizado de Máquina)?",
+                options: [
+                    "Um programa que substitui fisicamente os componentes do computador",
+                    "A capacidade de um sistema aprender e melhorar a partir de dados sem ser explicitamente programado",
+                    "Um robô de fábrica que aprende a andar",
+                    "Um tipo de vírus de computador que se multiplica"
+                ],
+                answer: 1
+            },
+            {
+                question: "O que são 'Redes Neurais Artificiais'?",
+                options: [
+                    "Cabos de fibra óptica de alta velocidade",
+                    "Modelos computacionais inspirados na estrutura do cérebro humano",
+                    "Redes sociais focadas em profissionais de saúde",
+                    "Conexões de internet sem fio ultrarrápidas"
+                ],
+                answer: 1
+            },
+            {
+                question: "Qual destas tarefas é um exemplo clássico de Visão Computacional?",
+                options: [
+                    "Traduzir um texto do inglês para o português",
+                    "Reconhecimento facial em fotos para desbloquear o celular",
+                    "Gerar um gráfico de planilhas",
+                    "Compor uma música erudita"
+                ],
+                answer: 1
+            },
+            {
+                question: "Modelos como ChatGPT, Claude e Gemini pertencem a qual categoria de IA?",
+                options: [
+                    "IA Genética",
+                    "IA Robótica Industrial",
+                    "Modelos de Linguagem de Grande Porte (LLM)",
+                    "Sistemas Operacionais Quânticos"
+                ],
+                answer: 2
+            },
+            {
+                question: "O que significa o termo 'Alucinação' no contexto de IA Gerativa?",
+                options: [
+                    "Quando o computador esquenta demais e desliga",
+                    "Quando a IA gera respostas incorretas ou inventadas com total convicção",
+                    "Quando o usuário imagina que a IA está consciente",
+                    "Um erro de código que impede a execução do programa"
+                ],
+                answer: 1
+            },
+            {
+                question: "O que é o Teste de Turing?",
+                options: [
+                    "Um teste de velocidade para processadores de computador",
+                    "Um teste para avaliar a capacidade de uma máquina exibir comportamento inteligente indistinguível de um humano",
+                    "Um exame de segurança contra invasões de hackers",
+                    "Um teste que mede a quantidade de energia que uma IA consome"
+                ],
+                answer: 1
+            },
+            {
+                question: "Qual das alternativas abaixo representa uma preocupação ética comum em relação à IA?",
+                options: [
+                    "Viés discriminatório nos dados de treinamento",
+                    "Consumo excessivo de papel",
+                    "Aumentar a velocidade dos computadores antigos",
+                    "Incompatibilidade com redes Wi-Fi"
+                ],
+                answer: 0
+            },
+            {
+                question: "O que caracteriza a Inteligência Artificial Geral (AGI)?",
+                options: [
+                    "Uma IA que só consegue jogar xadrez melhor que humanos",
+                    "Um sistema hipotético com capacidade intelectual humana de aprender e realizar qualquer tarefa cognitiva",
+                    "Qualquer assistente virtual presente em smartphones atuais",
+                    "Um robô capaz de realizar apenas limpezas domésticas"
+                ],
+                answer: 1
+            }
+        ];
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let selectedOption = null;
+
+        const questionNumberEl = document.getElementById('question-number');
+        const questionTextEl = document.getElementById('question-text');
+        const optionsContainerEl = document.getElementById('options-container');
+        const nextBtn = document.getElementById('next-btn');
+        const quizScreen = document.getElementById('quiz-screen');
+        const resultScreen = document.getElementById('result-screen');
+        const scoreDisplay = document.getElementById('score-display');
+        const resultMessage = document.getElementById('result-message');
+
+        function loadQuestion() {
+            selectedOption = null;
+            nextBtn.disabled = true;
+            
+            const currentQuestion = questions[currentQuestionIndex];
+            questionNumberEl.textContent = `Pergunta ${currentQuestionIndex + 1} de ${questions.length}`;
+            questionTextEl.textContent = currentQuestion.question;
+
+            optionsContainerEl.innerHTML = '';
+            
+            currentQuestion.options.forEach((option, index) => {
+                const button = document.createElement('button');
+                button.classList.add('option-btn');
+                button.textContent = option;
+                button.onclick = () => selectOption(index, button);
+                optionsContainerEl.appendChild(button);
+            });
+
+            if (currentQuestionIndex === questions.length - 1) {
+                nextBtn.textContent = 'Ver Resultado';
+            } else {
+                nextBtn.textContent = 'Próxima Pergunta';
+            }
+        }
+
+        function selectOption(index, buttonElement) {
+            selectedOption = index;
+            
+            const allButtons = optionsContainerEl.querySelectorAll('.option-btn');
+            allButtons.forEach(btn => btn.classList.remove('selected'));
+            
+            buttonElement.classList.add('selected');
+            nextBtn.disabled = false;
+        }
+
+        nextBtn.addEventListener('click', () => {
+            if (selectedOption === null) return;
+
+            if (selectedOption === questions[currentQuestionIndex].answer) {
+                score++;
+            }
+
+            currentQuestionIndex++;
+
+            if (currentQuestionIndex < questions.length) {
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        });
+
+        function showResults() {
+            quizScreen.style.display = 'none';
+            resultScreen.style.display = 'block';
+
+            const percentage = (score / questions.length) * 100;
+            scoreDisplay.textContent = `${score}/${questions.length}`;
+
+            let message = "";
+            if (score === 10) {
+                message = "Excelente! Você é um verdadeiro especialista em IA!";
+            } else if (score >= 7) {
+                message = "Muito bem! Você tem um ótimo conhecimento sobre o mundo da Inteligência Artificial.";
+            } else if (score >= 5) {
+                message = "Bom trabalho! Você conhece os conceitos básicos, mas ainda pode aprender bastante.";
+            } else {
+                message = "Continue estudando! O campo da Inteligência Artificial é vasto e cheio de curiosidades para aprender.";
+            }
+
+            resultMessage.textContent = message;
+        }
+
+        function restartQuiz() {
+            currentQuestionIndex = 0;
+            score = 0;
+            resultScreen.style.display = 'none';
+            quizScreen.style.display = 'block';
+            loadQuestion();
+        }
+
+        // Inicia o quiz ao carregar a página
+        loadQuestion();
+    </script>
+</body>
+</html>
